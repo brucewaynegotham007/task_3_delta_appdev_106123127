@@ -1,0 +1,8 @@
+from flask_app import app, db, User, Task
+
+with app.app_context():
+    db.create_all()
+    user_count = User.query.count()
+    task_count = Task.query.count()
+    print(f"Number of users: {user_count}")
+    print(f"Number of tasks: {task_count}")
