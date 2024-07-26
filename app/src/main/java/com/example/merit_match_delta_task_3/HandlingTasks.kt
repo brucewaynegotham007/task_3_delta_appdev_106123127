@@ -329,7 +329,7 @@ fun ApprovalPage(navController : NavController) {
                             modifier = Modifier
                                 .scale(1.5f)
                                 .clickable {
-
+                                    showFilters.value = true
                                 }
                         )
                     }
@@ -572,228 +572,7 @@ fun ApprovalPage(navController : NavController) {
             Filters(showFilters , minKarmaPoints , location)
         }
     }
-    val showSideBar = remember { mutableStateOf(false) }
-    if(!showSideBar.value){
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            IconButton(
-                onClick = {
-                    showSideBar.value = !showSideBar.value
-                },
-                modifier = Modifier.padding(start = 10.dp)
-            ) {
-                Icon(
-                    Icons.Default.Menu,
-                    contentDescription = "Menu bar icon",
-                    modifier = Modifier.scale(2f),
-                    tint = Color.Black
-                )
-            }
-        }
-    }
-    if(showSideBar.value) {
-        Column(
-            modifier = Modifier.size(200.dp , 1000.dp)
-        ) {
-            Card(
-                modifier = Modifier.size(250.dp , 1000.dp),
-                colors = CardDefaults.cardColors(Color(100, 129, 200)),
-                shape = RectangleShape
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.padding(top = 10.dp))
-                    IconButton(
-                        onClick = {
-                            showSideBar.value = !showSideBar.value
-                        },
-                        modifier = Modifier.padding(start = 10.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = "Menu bar icon",
-                            modifier = Modifier.scale(2f)
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 140.dp)
-                            .clickable {
-                                //do nothing
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                Icons.Default.AccountCircle,
-                                contentDescription = "Account icon",
-                                modifier = Modifier.scale(2f)
-                            )
-                            Spacer(modifier = Modifier.padding(top = 20.dp))
-                            Text(
-                                text = "Username : ${userName.value}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(modifier = Modifier.padding(top = 10.dp))
-                            Text(
-                                text = "Karma Points : ${karma_points.value}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("displayTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Show Available Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("approveTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Approve Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("createTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Create Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("transactionHistory")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Transaction history"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("myActiveTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "My Active Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("getKarmaPoints")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Get karma points"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("myReservedTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "My Reserved Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                tokenForTheSession.value = ""
-                                navController.navigate("loginPage")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Logout"
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+    SideBar(navController = navController)
     if(newNotification.value) {
         NotificationOnTop(navController)
     }
@@ -1177,6 +956,14 @@ fun DisplayTasks(navController: NavController) {
             Filters(showFilters , minKarmaPoints , location)
         }
     }
+    SideBar(navController = navController)
+    if(newNotification.value) {
+        NotificationOnTop(navController)
+    }
+}
+
+@Composable
+fun SideBar(navController: NavController) {
     val showSideBar = remember { mutableStateOf(false) }
     if(!showSideBar.value){
         Column(
@@ -1227,9 +1014,10 @@ fun DisplayTasks(navController: NavController) {
                             modifier = Modifier.scale(2f)
                         )
                     }
+                    Spacer(modifier = Modifier.padding(top = 10.dp))
                     Box(
                         modifier = Modifier
-                            .size(200.dp, 140.dp)
+                            .size(250.dp, 140.dp)
                             .clickable {
                                 //do nothing
                             }
@@ -1264,9 +1052,10 @@ fun DisplayTasks(navController: NavController) {
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.padding(top = 30.dp))
                     Box(
                         modifier = Modifier
-                            .size(200.dp, 60.dp)
+                            .size(250.dp, 60.dp)
                             .clickable {
                                 navController.navigate("displayTasks")
                             }
@@ -1283,7 +1072,7 @@ fun DisplayTasks(navController: NavController) {
                     }
                     Box(
                         modifier = Modifier
-                            .size(200.dp, 60.dp)
+                            .size(250.dp, 60.dp)
                             .clickable {
                                 navController.navigate("approveTasks")
                             }
@@ -1300,7 +1089,7 @@ fun DisplayTasks(navController: NavController) {
                     }
                     Box(
                         modifier = Modifier
-                            .size(200.dp, 60.dp)
+                            .size(250.dp, 60.dp)
                             .clickable {
                                 navController.navigate("createTasks")
                             }
@@ -1317,7 +1106,7 @@ fun DisplayTasks(navController: NavController) {
                     }
                     Box(
                         modifier = Modifier
-                            .size(200.dp, 60.dp)
+                            .size(250.dp, 60.dp)
                             .clickable {
                                 navController.navigate("transactionHistory")
                             }
@@ -1334,7 +1123,7 @@ fun DisplayTasks(navController: NavController) {
                     }
                     Box(
                         modifier = Modifier
-                            .size(200.dp, 60.dp)
+                            .size(250.dp, 60.dp)
                             .clickable {
                                 navController.navigate("myActiveTasks")
                             }
@@ -1351,7 +1140,7 @@ fun DisplayTasks(navController: NavController) {
                     }
                     Box(
                         modifier = Modifier
-                            .size(200.dp, 60.dp)
+                            .size(250.dp, 60.dp)
                             .clickable {
                                 navController.navigate("getKarmaPoints")
                             }
@@ -1368,7 +1157,7 @@ fun DisplayTasks(navController: NavController) {
                     }
                     Box(
                         modifier = Modifier
-                            .size(200.dp, 60.dp)
+                            .size(250.dp, 60.dp)
                             .clickable {
                                 navController.navigate("myReservedTasks")
                             }
@@ -1385,7 +1174,7 @@ fun DisplayTasks(navController: NavController) {
                     }
                     Box(
                         modifier = Modifier
-                            .size(200.dp, 60.dp)
+                            .size(250.dp, 60.dp)
                             .clickable {
                                 tokenForTheSession.value = ""
                                 navController.navigate("loginPage")
@@ -1404,9 +1193,6 @@ fun DisplayTasks(navController: NavController) {
                 }
             }
         }
-    }
-    if(newNotification.value) {
-        NotificationOnTop(navController)
     }
 }
 
@@ -1724,228 +1510,7 @@ fun TaskDetails(task: Task , navController : NavController) {
             }
         }
     }
-    val showSideBar = remember { mutableStateOf(false) }
-    if(!showSideBar.value){
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            IconButton(
-                onClick = {
-                    showSideBar.value = !showSideBar.value
-                },
-                modifier = Modifier.padding(start = 10.dp)
-            ) {
-                Icon(
-                    Icons.Default.Menu,
-                    contentDescription = "Menu bar icon",
-                    modifier = Modifier.scale(2f),
-                    tint = Color.Black
-                )
-            }
-        }
-    }
-    if(showSideBar.value) {
-        Column(
-            modifier = Modifier.size(200.dp , 1000.dp)
-        ){
-            Card(
-                modifier = Modifier.size(250.dp , 1000.dp),
-                colors = CardDefaults.cardColors(Color(100, 129, 200)),
-                shape = RectangleShape
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.padding(top = 10.dp))
-                    IconButton(
-                        onClick = {
-                            showSideBar.value = !showSideBar.value
-                        },
-                        modifier = Modifier.padding(start = 10.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = "Menu bar icon",
-                            modifier = Modifier.scale(2f)
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 140.dp)
-                            .clickable {
-                                //do nothing
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                Icons.Default.AccountCircle,
-                                contentDescription = "Account icon",
-                                modifier = Modifier.scale(2f)
-                            )
-                            Spacer(modifier = Modifier.padding(top = 20.dp))
-                            Text(
-                                text = "Username : ${userName.value}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(modifier = Modifier.padding(top = 10.dp))
-                            Text(
-                                text = "Karma Points : ${karma_points.value}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("displayTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Show Available Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("approveTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Approve Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("createTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Create Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("transactionHistory")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Transaction history"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("myActiveTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "My Active Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("getKarmaPoints")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Get karma points"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("myReservedTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "My Reserved Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                tokenForTheSession.value = ""
-                                navController.navigate("loginPage")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Logout"
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+    SideBar(navController = navController)
     if(newNotification.value) {
         NotificationOnTop(navController)
     }
@@ -2326,228 +1891,7 @@ fun TaskDetailsSeekingApproval(task: TaskSeekingApproval , navController: NavCon
     if(triggerReviewBox.value) {
         ReviewBox(task)
     }
-    val showSideBar = remember { mutableStateOf(false) }
-    if(!showSideBar.value){
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            IconButton(
-                onClick = {
-                    showSideBar.value = !showSideBar.value
-                },
-                modifier = Modifier.padding(start = 10.dp)
-            ) {
-                Icon(
-                    Icons.Default.Menu,
-                    contentDescription = "Menu bar icon",
-                    modifier = Modifier.scale(2f),
-                    tint = Color.Black
-                )
-            }
-        }
-    }
-    if(showSideBar.value) {
-        Column(
-            modifier = Modifier.size(200.dp , 1000.dp)
-        ){
-            Card(
-                modifier = Modifier.size(250.dp , 1000.dp),
-                colors = CardDefaults.cardColors(Color(100, 129, 200)),
-                shape = RectangleShape
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.padding(top = 10.dp))
-                    IconButton(
-                        onClick = {
-                            showSideBar.value = !showSideBar.value
-                        },
-                        modifier = Modifier.padding(start = 10.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = "Menu bar icon",
-                            modifier = Modifier.scale(2f)
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 140.dp)
-                            .clickable {
-                                //do nothing
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                Icons.Default.AccountCircle,
-                                contentDescription = "Account icon",
-                                modifier = Modifier.scale(2f)
-                            )
-                            Spacer(modifier = Modifier.padding(top = 20.dp))
-                            Text(
-                                text = "Username : ${userName.value}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(modifier = Modifier.padding(top = 10.dp))
-                            Text(
-                                text = "Karma Points : ${karma_points.value}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("displayTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Show Available Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("approveTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Approve Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("createTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Create Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("transactionHistory")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Transaction history"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("myActiveTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "My Active Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("getKarmaPoints")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Get karma points"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("myReservedTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "My Reserved Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                tokenForTheSession.value = ""
-                                navController.navigate("loginPage")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Logout"
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+    SideBar(navController = navController)
     if(newNotification.value) {
         NotificationOnTop(navController)
     }
@@ -2881,228 +2225,7 @@ fun TaskDetailsForMyReservedTasks(navController: NavController , task: Task) {
             }
         }
     }
-    val showSideBar = remember { mutableStateOf(false) }
-    if(!showSideBar.value){
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            IconButton(
-                onClick = {
-                    showSideBar.value = !showSideBar.value
-                },
-                modifier = Modifier.padding(start = 10.dp)
-            ) {
-                Icon(
-                    Icons.Default.Menu,
-                    contentDescription = "Menu bar icon",
-                    modifier = Modifier.scale(2f),
-                    tint = Color.Black
-                )
-            }
-        }
-    }
-    if(showSideBar.value) {
-        Column(
-            modifier = Modifier.size(200.dp , 1000.dp)
-        ){
-            Card(
-                modifier = Modifier.size(250.dp , 1000.dp),
-                colors = CardDefaults.cardColors(Color(100, 129, 200)),
-                shape = RectangleShape
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.padding(top = 10.dp))
-                    IconButton(
-                        onClick = {
-                            showSideBar.value = !showSideBar.value
-                        },
-                        modifier = Modifier.padding(start = 10.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = "Menu bar icon",
-                            modifier = Modifier.scale(2f)
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 140.dp)
-                            .clickable {
-                                //do nothing
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                Icons.Default.AccountCircle,
-                                contentDescription = "Account icon",
-                                modifier = Modifier.scale(2f)
-                            )
-                            Spacer(modifier = Modifier.padding(top = 20.dp))
-                            Text(
-                                text = "Username : ${userName.value}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(modifier = Modifier.padding(top = 10.dp))
-                            Text(
-                                text = "Karma Points : ${karma_points.value}",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("displayTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Show Available Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("approveTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Approve Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("createTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Create Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("transactionHistory")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Transaction history"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("myActiveTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "My Active Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("getKarmaPoints")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Get karma points"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                navController.navigate("myReservedTasks")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "My Reserved Tasks"
-                            )
-                        }
-                    }
-                    Box(
-                        modifier = Modifier
-                            .size(200.dp, 60.dp)
-                            .clickable {
-                                tokenForTheSession.value = ""
-                                navController.navigate("loginPage")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Logout"
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+    SideBar(navController = navController)
     if(newNotification.value) {
         NotificationOnTop(navController)
     }
