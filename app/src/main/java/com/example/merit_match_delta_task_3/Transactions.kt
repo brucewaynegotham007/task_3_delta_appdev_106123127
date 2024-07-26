@@ -489,15 +489,14 @@ fun TransactionsBetweenTwoUsers(navController: NavController , otherId : Int , o
 fun shareToSocialMedia(text : String , context: Context) {
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
-        putExtra(Intent.EXTRA_INTENT,text)
+        putExtra(Intent.EXTRA_TEXT,text)
     }
     val chooserIntent = Intent.createChooser(intent , "Share to")
     context.startActivity(chooserIntent)
 }
 
 @Composable
-fun ShareButton(text: String) {
-    val context = LocalContext.current
+fun ShareButton(text: String , context: Context) {
     IconButton(
         onClick = {
             shareToSocialMedia(text, context)

@@ -1500,11 +1500,15 @@ fun TaskDetails(task: Task , navController : NavController) {
                 Spacer(modifier = Modifier.padding(start = 0.dp))
                 Column() {
                     Spacer(modifier = Modifier.padding(top = 15.dp))
+                    val shareText = buildString {
+                        append("Task Title: ${task.title}\n")
+                        append("Task Karma Points: ${task.karmaPoints}\n")
+                        append("Task ID: ${task.taskId}\n")
+                        append("Task Description: ${task.description}")
+                    }
+                    Log.d("shareText" , shareText)
                     ShareButton(
-                        text = "Task Title : ${task.title}"
-                                + "Task karma points : ${task.karmaPoints}"
-                                + "Task Id : ${task.taskId}"
-                                + "Task description : ${task.description}"
+                        text = shareText , context = context
                     )
                 }
             }
@@ -1875,14 +1879,17 @@ fun TaskDetailsSeekingApproval(task: TaskSeekingApproval , navController: NavCon
                         color = Color.LightGray
                     )
                 }
+                val shareText = buildString {
+                    append("Task Title: ${task.title}\n")
+                    append("Task Karma Points: ${task.karmaPoints}\n")
+                    append("Task ID: ${task.taskId}\n")
+                    append("Task Description: ${task.description}")
+                }
                 Spacer(modifier = Modifier.padding(start = 0.dp))
                 Column() {
                     Spacer(modifier = Modifier.padding(top = 15.dp))
                     ShareButton(
-                        text = "Task Title : ${task.title}"
-                                + "Task karma points : ${task.karmaPoints}"
-                                + "Task Id : ${task.taskId}"
-                                + "Task description : ${task.description}"
+                        text = shareText , context = context
                     )
                 }
             }
@@ -2212,14 +2219,17 @@ fun TaskDetailsForMyReservedTasks(navController: NavController , task: Task) {
                         color = Color.White
                     )
                 }
+                val shareText = buildString {
+                    append("Task Title: ${task.title}\n")
+                    append("Task Karma Points: ${task.karmaPoints}\n")
+                    append("Task ID: ${task.taskId}\n")
+                    append("Task Description: ${task.description}")
+                }
                 Spacer(modifier = Modifier.padding(start = 0.dp))
                 Column() {
                     Spacer(modifier = Modifier.padding(top = 15.dp))
                     ShareButton(
-                        text = "Task Title : ${task.title}"
-                                + "Task karma points : ${task.karmaPoints}"
-                                + "Task Id : ${task.taskId}"
-                                + "Task description : ${task.description}"
+                        text = shareText , context = context
                     )
                 }
             }
