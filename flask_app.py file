@@ -1,0 +1,272 @@
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+from functools import wraps
+from datetime import datetime , timedelta
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///meritmath.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# Models
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    karma_points = db.Column(db.Integer, default=1000)
+    last_login = db.Column(db.DateTime , default=datetime.utcnow)
+    rating = db.Column(db.Integer , default=0)
+    no_of_reviews = db.Column(db.Integer , default=0)
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
+    karma_points = db.Column(db.Integer, nullable=False)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    helper_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status = db.Column(db.String(20), default='open')  # open, reserved, pending_approval,completed
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    location = db.Column(db.String(200) , default='na')
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    other_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    transaction_type = db.Column(db.String(20), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', foreign_keys=[user_id], backref=db.backref('transactions', lazy=True))
+    other = db.relationship('User', foreign_keys=[other_id])
+    task = db.relationship('Task', backref=db.backref('transactions', lazy=True))
+
+@app.route('/' , methods = ['GET'])
+def homePage() :
+    return jsonify({'message' : 'Hello World !'}) , 201
+
+# Authentication decorator
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 401
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = User.query.filter_by(id=data['user_id']).first()
+        except:
+            return jsonify({'message': 'Token is invalid!'}), 401
+        return f(current_user, *args, **kwargs)
+    return decorated
+
+# Routes
+@app.route('/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    hashed_password = generate_password_hash(data['password'], method='pbkdf2:sha256')
+    new_user = User(username=data['username'], password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({'message': 'New user created!'}), 201
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    if not data or not data.get('username') or not data.get('password'):
+        return jsonify({'message': 'Could not verify'}), 401
+    user = User.query.filter_by(username=data.get('username')).first()
+    if not user:
+        return jsonify({'message': 'User not found'}), 401
+    if check_password_hash(user.password, data.get('password')):
+        token = jwt.encode({'user_id': user.id, 'exp': datetime.utcnow() + timedelta(hours=24)},
+                           app.config['SECRET_KEY'], algorithm="HS256")
+        return jsonify({'token': token})
+    return jsonify({'message': 'Could not verify'}), 401
+
+@app.route('/user', methods=['GET'])
+@token_required
+def get_user_info(current_user):
+    return jsonify({'username': current_user.username, 'karma_points': current_user.karma_points , 'rating' : current_user.rating})
+
+@app.route('/mytasks' , methods=['GET'])
+@token_required
+def mytasks(current_user):
+    tasks = Task.query.filter_by(status='open').filter(Task.creator_id == current_user.id).all()
+    return jsonify([{'id': task.id, 'title': task.title, 'description': task.description,
+                    'karma_points': task.karma_points , 'status' : task.status} for task in tasks])
+
+@app.route('/myreservedtasks' , methods=['GET'])
+@token_required
+def myreservedtasks(current_user):
+    tasks = Task.query.filter_by(status='reserved').filter(Task.helper_id == current_user.id).all()
+    return jsonify([{'id': task.id, 'title': task.title, 'description': task.description,
+                    'karma_points': task.karma_points , 'status' : task.status , 'location' : task.location} for task in tasks])
+
+@app.route('/tasks', methods=['GET', 'POST'])
+@token_required
+def tasks(current_user):
+    if request.method == 'POST':
+        data = request.get_json()
+        new_task = Task(title=data['title'], description=data['description'],
+                        karma_points=data['karma_points'], creator_id=current_user.id, location=data['location'])
+        db.session.add(new_task)
+        db.session.commit()
+        return jsonify({'message': 'New task created!' , 'task_id' : new_task.id}), 201
+    else:
+        tasks = Task.query.filter_by(status='open').filter(Task.creator_id != current_user.id).all()
+        return jsonify([{'id': task.id, 'title': task.title, 'description': task.description,
+                         'karma_points': task.karma_points , 'location' : task.location} for task in tasks])
+
+@app.route('/notifications' , methods = ['GET'])
+@token_required
+def notifications(current_user):
+    tasks = Task.query.filter(Task.creator_id == current_user.id, Task.status.in_(['reserved', 'completed', 'pending_approval'])).order_by(Task.timestamp.desc()).all()
+    return jsonify([{'id': task.id, 'title': task.title,
+                    'karma_points': task.karma_points , 'status' : task.status , 'helper_id' : task.helper_id,
+                    'timestamp': task.timestamp.isoformat()} for task in tasks])
+
+@app.route('/tasks/<int:task_id>/reserve', methods=['POST'])
+@token_required
+def reserve_task(current_user, task_id):
+    task = Task.query.get_or_404(task_id)
+    if task.status != 'open':
+        return jsonify({'message': 'Task is not available'}), 400
+    task.helper_id = current_user.id
+    task.status = 'reserved'
+    db.session.commit()
+    return jsonify({'message': 'Task reserved successfully'})
+
+@app.route('/tasks/<int:task_id>/complete', methods=['POST'])
+@token_required
+def complete_task(current_user, task_id):
+    task = Task.query.get_or_404(task_id)
+    if task.status != 'reserved' or task.helper_id != current_user.id:
+        return jsonify({'message': 'Cannot complete this task'}), 400
+    creator = User.query.get(task.creator_id)
+    helper = current_user
+    if creator.karma_points < task.karma_points:
+        return jsonify({'message': 'Task creator does not have enough karma points'}), 400
+    task.status = 'pending_approval'
+    db.session.commit()
+    return jsonify({'message': 'Task pending approval from the creator'})
+
+@app.route('/tasks/pending_approval', methods=['GET'])
+@token_required
+def get_pending_approval_tasks(current_user):
+    tasks = Task.query.filter_by(creator_id=current_user.id, status='pending_approval').all()
+    return jsonify([{'id': task.id, 'title': task.title, 'description': task.description,
+                     'karma_points': task.karma_points, 'helper_id': task.helper_id , 'location' : task.location} for task in tasks])
+
+@app.route('/tasks/<int:task_id>/approve', methods=['POST'])
+@token_required
+def approve_task(current_user, task_id):
+    task = Task.query.get_or_404(task_id)
+    if task.creator_id != current_user.id:
+        return jsonify({'message': 'You are not authorized to approve this task'}), 403
+    if task.status != 'pending_approval':
+        return jsonify({'message': 'This task is not pending approval'}), 400
+
+    data = request.get_json()
+    is_approved = data.get('approved', False)
+
+    if is_approved:
+        creator = current_user
+        helper = User.query.get(task.helper_id)
+        if creator.karma_points < task.karma_points:
+            return jsonify({'message': 'Task creator does not have enough karma points'}), 400
+
+        transaction = Transaction(
+            user_id=creator.id,
+            other_id=helper.id,
+            task_id=task.id,
+            amount=-task.karma_points,
+            transaction_type='task_completion'
+        )
+
+        db.session.add(transaction)
+
+        creator.karma_points -= task.karma_points
+        helper.karma_points += task.karma_points
+        task.status = 'completed'
+        db.session.commit()
+        return jsonify({'message': 'Task approved and completed successfully'})
+    else:
+        task.status = 'open'  # Changed from 'rejected' to 'open'
+        task.helper_id = None  # Reset the helper_id
+        db.session.commit()
+        return jsonify({'message': 'Task completion rejected, task returned to open status'})
+
+@app.route('/transactions', methods=['GET'])
+@token_required
+def get_transactions(current_user):
+    transactions = Transaction.query.filter_by(user_id=current_user.id).order_by(Transaction.timestamp.desc()).all()
+    return jsonify([{
+        'id': t.id,
+        'task_id': t.task_id,
+        'other_id': t.other_id,
+        'other_user' : User.query.get(t.other_id).username,
+        'amount': t.amount,
+        'transaction_type': t.transaction_type,
+        'timestamp': t.timestamp.isoformat()
+    } for t in transactions])
+
+@app.route('/transactions/with/<int:other_user_id>', methods=['GET'])
+@token_required
+def get_transactions_with_user(current_user, other_user_id):
+    other_user = User.query.get_or_404(other_user_id)
+
+    transactions = Transaction.query.filter(
+        ((Transaction.user_id == current_user.id) & (Transaction.other_id == other_user_id)) |
+        ((Transaction.user_id == other_user_id) & (Transaction.other_id == current_user.id))
+    ).order_by(Transaction.timestamp.desc()).all()
+
+    return jsonify([{
+        'id': t.id,
+        'task_id': t.task_id,
+        'task_title': t.task.title,
+        'amount': t.amount,
+        'transaction_type': t.transaction_type,
+        'timestamp': t.timestamp.isoformat(),
+        'is_current_user_creator': t.user_id == current_user.id
+    } for t in transactions])
+
+@app.route('/daily_bonus_availability' , methods = ['GET'])
+@token_required
+def is_daily_bonus_available(current_user):
+    if datetime.utcnow().date() > current_user.last_login.date():
+        current_user.last_login = datetime.utcnow()
+        db.session.commit()
+        return jsonify({'message' : True})
+    else:
+        return jsonify({'message' : False})
+
+@app.route('/handle_bonus' , methods = ['GET'])
+@token_required
+def handle_bonus(current_user):
+    current_user.karma_points += 10
+    db.session.commit()
+    return jsonify({'karma_points' : current_user.karma_points})
+
+@app.route('/handle_rating' , methods = ['POST'])
+@token_required
+def handle_rating(current_user):
+    data = request.get_json()
+    task_id = data.get('task_id')
+    helper_id = Task.query.filter(Task.id == task_id).first().helper_id
+    user = User.query.filter(User.id == helper_id).first()
+    user.no_of_reviews = user.no_of_reviews + 1
+    user.rating = (user.rating + data.get('rating'))/user.no_of_reviews
+    db.session.commit()
+    return jsonify({'message' : 'rating updated'})
+
+@app.route('/otheruserdetails' , methods = ['POST'])
+def other_user_details(current_user):
+    data = request.get_json()
+    user_id = data.get('user_id')
+    user = User.query.filter(User.id == user_id).first()
+    return jsonify({'username' : user.username , 'rating' : user.rating})
