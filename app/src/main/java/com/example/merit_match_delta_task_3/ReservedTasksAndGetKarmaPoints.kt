@@ -673,19 +673,20 @@ fun MyReservedTasks(navController: NavController) {
 data class UserDeets(
     val username : String,
     val rating : Int,
-    val noOfPeopleHelped : Int
+    val noOfPeopleHelped : Int,
+    val dateOfJoining : String
 )
 
 @Composable
 fun ShowUserDetails(userId : Int , navController: NavController) {
-    val userDeets = UserDeets("Batman", 3 , 5)
+    val userDeets = UserDeets("Batman", 3 , 5, "today")
     val otherUserData = remember { mutableStateOf(userDeets) }
     val context = LocalContext.current
     val ready = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         try {
             val responseForOtherUserData = retrofitServiceForGettingOtherUserData.getOtherUserData(tokenForTheSession.value , OtherUserData(userId))
-            otherUserData.value = UserDeets(responseForOtherUserData.username , responseForOtherUserData.rating , 5)
+            otherUserData.value = UserDeets(responseForOtherUserData.username , responseForOtherUserData.rating , responseForOtherUserData.noOfPeopleHelped , responseForOtherUserData.dateOfJoining)
             ready.value = true
         }
         catch(e : Exception) {
@@ -715,7 +716,7 @@ fun ShowUserDetails(userId : Int , navController: NavController) {
         ) {
             Card(
                 modifier = Modifier
-                    .size(300.dp, 400.dp)
+                    .size(350.dp, 420.dp)
                     .border(
                         width = 3.dp,
                         color = Color.White,
@@ -728,13 +729,13 @@ fun ShowUserDetails(userId : Int , navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Spacer(modifier = Modifier.padding(top = 10.dp))
+                    Spacer(modifier = Modifier.padding(top = 20.dp))
                     Icon(
                         Icons.Default.AccountCircle,
                         contentDescription = "user image",
                         modifier = Modifier.scale(5f)
                     )
-                    Spacer(modifier = Modifier.padding(top = 90.dp))
+                    Spacer(modifier = Modifier.padding(top = 70.dp))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -797,6 +798,24 @@ fun ShowUserDetails(userId : Int , navController: NavController) {
                         Spacer(modifier = Modifier.padding(start = 30.dp))
                         Text(
                             text = otherUserData.value.noOfPeopleHelped.toString(),
+                            fontSize = 20.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.padding(top = 30.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 40.dp),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            text = "Date of joining : ",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.padding(start = 30.dp))
+                        Text(
+                            text = otherUserData.value.dateOfJoining.substring(0,11),
                             fontSize = 20.sp
                         )
                     }

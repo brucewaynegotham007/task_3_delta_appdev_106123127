@@ -284,7 +284,9 @@ interface ApiServiceForHandlingRating {
 
 data class OtherUserDataResponse(
     @SerializedName("username") val username: String,
-    @SerializedName("rating") val rating: Int
+    @SerializedName("rating") val rating: Int,
+    @SerializedName("date_of_joining") val dateOfJoining : String,
+    @SerializedName("no_of_people_helped") val noOfPeopleHelped : Int
 )
 
 data class OtherUserData(
