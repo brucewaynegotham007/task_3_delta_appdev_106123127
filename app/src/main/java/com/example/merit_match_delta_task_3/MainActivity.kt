@@ -70,7 +70,7 @@ import androidx.navigation.navArgument
 import com.example.merit_match_delta_task_3.ui.theme.Merit_match_delta_task_3Theme
 import kotlinx.coroutines.delay
 import org.json.JSONObject
-import java.lang.Exception
+import kotlin.Exception
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -147,6 +147,15 @@ fun MyApp() {
         }
         composable("notifications") {
             Notifications(navController = navController)
+        }
+        composable(
+            route = "showUserDetails/{userId}",
+            arguments = listOf(
+                navArgument("userId") {type = NavType.IntType}
+            )
+        ) {backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId") ?: 0
+            ShowUserDetails(userId , navController)
         }
         composable(
             route = "transactionsBetweenTwoUsers/{otherId}/{otherUser}",

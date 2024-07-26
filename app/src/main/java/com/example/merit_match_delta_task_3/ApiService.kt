@@ -35,6 +35,7 @@ val retrofitServiceForNotifications : ApiServiceForNotifications = retrofit.crea
 val retrofitServiceForDailyBonusAvailability : ApiServiceForDailyBonus = retrofit.create(ApiServiceForDailyBonus::class.java)
 val retrofitServiceForKarmaPointsAfterChange : ApiServiceForKarmaPointsAfterChange = retrofit.create(ApiServiceForKarmaPointsAfterChange::class.java)
 val retrofitServiceForHandlingRating : ApiServiceForHandlingRating = retrofit.create(ApiServiceForHandlingRating::class.java)
+val retrofitServiceForGettingOtherUserData : ApiServiceForGettingOtherUserData = retrofit.create(ApiServiceForGettingOtherUserData::class.java)
 
 data class SignupBody(
     @SerializedName("username") val username : String,
@@ -279,5 +280,22 @@ interface ApiServiceForHandlingRating {
         @Header("Authorization") token: String,
         @Body ratingBody: RatingBody
     ) : EditResponse
+}
+
+data class OtherUserDataResponse(
+    @SerializedName("username") val username: String,
+    @SerializedName("rating") val rating: Int
+)
+
+data class OtherUserData(
+    @SerializedName("user_id") val userId : Int
+)
+
+interface ApiServiceForGettingOtherUserData {
+    @POST("otheruserdetails")
+    suspend fun getOtherUserData(
+        @Header("Authorization") token : String,
+        @Body otherUserData : OtherUserData
+    ) : OtherUserDataResponse
 }
 

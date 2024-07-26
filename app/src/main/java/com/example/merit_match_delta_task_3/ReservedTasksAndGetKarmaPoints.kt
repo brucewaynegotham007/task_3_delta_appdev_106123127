@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
@@ -1119,7 +1120,391 @@ fun MyReservedTasks(navController: NavController) {
     }
 }
 
-@Composable
-fun showUserDetails() {
+data class UserDeets(
+    val username : String,
+    val rating : Int,
+    val noOfPeopleHelped : Int
+)
 
+@Composable
+fun ShowUserDetails(userId : Int , navController: NavController) {
+    val userDeets = UserDeets("Batman", 3 , 5)
+    val otherUserData = remember { mutableStateOf(userDeets) }
+    val context = LocalContext.current
+    val ready = remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        try {
+            val responseForOtherUserData = retrofitServiceForGettingOtherUserData.getOtherUserData(tokenForTheSession.value , OtherUserData(userId))
+            otherUserData.value = UserDeets(responseForOtherUserData.username , responseForOtherUserData.rating , 5)
+            ready.value = true
+        }
+        catch(e : Exception) {
+            Log.d("error" , "${e.message}")
+            Toast.makeText(context , e.message , Toast.LENGTH_LONG)
+        }
+    }
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = { context ->
+            ImageView(context).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                setImageResource(R.drawable.gradient)
+                scaleType = ImageView.ScaleType.CENTER_CROP
+            }
+        },
+        update = { /* No update needed */ }
+    )
+    if(ready.value) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Card(
+                modifier = Modifier
+                    .size(300.dp, 400.dp)
+                    .border(
+                        width = 3.dp,
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp)
+                    ),
+                colors = CardDefaults.cardColors(Color.White.copy(alpha = 0.4f))
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Spacer(modifier = Modifier.padding(top = 10.dp))
+                    Icon(
+                        Icons.Default.AccountCircle,
+                        contentDescription = "user image",
+                        modifier = Modifier.scale(5f)
+                    )
+                    Spacer(modifier = Modifier.padding(top = 90.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 40.dp),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            text = "Username        : ",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.padding(start = 10.dp))
+                        Text(
+                            text = otherUserData.value.username,
+                            fontSize = 20.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.padding(top = 30.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 40.dp),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            text = "Rating               : ",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.padding(start = 30.dp))
+                        Text(
+                            text = otherUserData.value.rating.toString(),
+                            fontSize = 20.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.padding(top = 30.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 40.dp),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Column() {
+                            Text(
+                                text = "Number of ",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "people helped ",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Text(
+                            text = " : ",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.padding(start = 30.dp))
+                        Text(
+                            text = otherUserData.value.noOfPeopleHelped.toString(),
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+    else {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Card(
+                modifier = Modifier
+                    .size(300.dp, 400.dp)
+                    .border(
+                        width = 3.dp,
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp)
+                    ),
+                colors = CardDefaults.cardColors(Color.White.copy(alpha = 0.4f))
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Loading...",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = Color.Black
+                    )
+                }
+            }
+        }
+    }
+    val showSideBar = remember { mutableStateOf(false) }
+    if(!showSideBar.value){
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
+        ) {
+            Spacer(modifier = Modifier.padding(top = 10.dp))
+            IconButton(
+                onClick = {
+                    showSideBar.value = !showSideBar.value
+                },
+                modifier = Modifier.padding(start = 10.dp)
+            ) {
+                Icon(
+                    Icons.Default.Menu,
+                    contentDescription = "Menu bar icon",
+                    modifier = Modifier.scale(2f),
+                    tint = Color.Black
+                )
+            }
+        }
+    }
+    if(showSideBar.value) {
+        Column(
+            modifier = Modifier.size(200.dp , 1000.dp)
+        ){
+            Card(
+                modifier = Modifier.size(250.dp , 1000.dp),
+                colors = CardDefaults.cardColors(Color(100, 129, 200)),
+                shape = RectangleShape
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Spacer(modifier = Modifier.padding(top = 10.dp))
+                    IconButton(
+                        onClick = {
+                            showSideBar.value = !showSideBar.value
+                        },
+                        modifier = Modifier.padding(start = 10.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Menu,
+                            contentDescription = "Menu bar icon",
+                            modifier = Modifier.scale(2f)
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp, 140.dp)
+                            .clickable {
+                                //do nothing
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                Icons.Default.AccountCircle,
+                                contentDescription = "Account icon",
+                                modifier = Modifier.scale(2f)
+                            )
+                            Spacer(modifier = Modifier.padding(top = 20.dp))
+                            Text(
+                                text = "Username : ${userName.value}",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.padding(top = 10.dp))
+                            Text(
+                                text = "Karma Points : ${karma_points.value}",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .clickable {
+                                navController.navigate("displayTasks")
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Show Available Tasks"
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .clickable {
+                                navController.navigate("approveTasks")
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Approve Tasks"
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .clickable {
+                                navController.navigate("createTasks")
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Create Tasks"
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .clickable {
+                                navController.navigate("transactionHistory")
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Transaction history"
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .clickable {
+                                navController.navigate("myActiveTasks")
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "My Active Tasks"
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .clickable {
+                                navController.navigate("getKarmaPoints")
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Get karma points"
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .clickable {
+                                navController.navigate("myReservedTasks")
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "My Reserved Tasks"
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(200.dp, 60.dp)
+                            .clickable {
+                                tokenForTheSession.value = ""
+                                navController.navigate("loginPage")
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Logout"
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

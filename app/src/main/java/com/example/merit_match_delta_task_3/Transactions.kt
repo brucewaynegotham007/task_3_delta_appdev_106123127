@@ -1059,14 +1059,19 @@ fun Notifications(navController: NavController) {
                                 Row() {
                                     Spacer(modifier = Modifier.padding(start = 20.dp))
                                     Text(
-                                        text = "Task " + notifications.taskId.toString() + " "+ notifications.status,
+                                        text = "Task " + notifications.taskId.toString() + " "+ notifications.status + " by ",
                                         fontSize = 22.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = " by user : " +notifications.helperId.toString(),
+                                        text = "user - " + notifications.helperId.toString(),
                                         fontSize = 22.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.Blue,
+                                        textDecoration = TextDecoration.Underline,
+                                        modifier = Modifier.clickable {
+                                            navController.navigate("showUserDetails/${notifications.helperId}")
+                                        }
                                     )
                                 }
                                 Spacer(modifier = Modifier.padding(top = 30.dp))
