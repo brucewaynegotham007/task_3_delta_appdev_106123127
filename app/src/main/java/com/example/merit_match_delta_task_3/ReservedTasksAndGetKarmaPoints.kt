@@ -437,6 +437,7 @@ fun MyReservedTasks(navController: NavController) {
     val executed = remember { mutableStateOf(false) }
     val originalCount = remember { mutableIntStateOf(0) }
     val newCount = remember { mutableIntStateOf(0) }
+    val isLoading = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         Log.d("token" , tokenForTheSession.value)
         try {
@@ -494,6 +495,7 @@ fun MyReservedTasks(navController: NavController) {
     )
     val responseForMyReservedTasks = remember { mutableStateOf<List<Task>>(emptyList()) }
     LaunchedEffect(Unit) {
+        isLoading.value = true
         Log.d("token" , tokenForTheSession.value)
         try {
             responseForMyReservedTasks.value = retrofitServiceForMyReservedTask.getMyReservedTasks(token = tokenForTheSession.value)
@@ -510,6 +512,9 @@ fun MyReservedTasks(navController: NavController) {
         }
         catch(e : Exception) {
             Log.d("error in displaying tasks needing approval" , "${e.message}")
+        }
+        finally {
+            isLoading.value = false
         }
     }
     val showFilters = remember { mutableStateOf(false) }
@@ -593,7 +598,7 @@ fun MyReservedTasks(navController: NavController) {
         }
         Spacer(modifier = Modifier.padding(top = 10.dp))
         Column() {
-            if (responseForMyReservedTasks.value.isEmpty()) {
+            if (responseForMyReservedTasks.value.isEmpty() && isLoading.value) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -602,11 +607,28 @@ fun MyReservedTasks(navController: NavController) {
                     Text(
                         text = "Loading...",
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 28.sp,
+                        fontSize = 30.sp,
+                        textDecoration = TextDecoration.Underline,
                         color = Color.White
                     )
                 }
-            } else {
+            }
+            else if(responseForMyReservedTasks.value.isEmpty() && !isLoading.value) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Nothing to show here :(",
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 30.sp,
+                        textDecoration = TextDecoration.Underline,
+                        color = Color.White
+                    )
+                }
+            }
+            else {
                 Spacer(modifier = Modifier.padding(top = 30.dp))
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()

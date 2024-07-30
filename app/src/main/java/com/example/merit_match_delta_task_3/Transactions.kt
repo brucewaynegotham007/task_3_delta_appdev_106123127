@@ -73,6 +73,7 @@ fun TransactionHistory(navController: NavController) {
     val executed = remember { mutableStateOf(false) }
     val originalCount = remember { mutableIntStateOf(0) }
     val newCount = remember { mutableIntStateOf(0) }
+    val isLoading = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         Log.d("token" , tokenForTheSession.value)
         try {
@@ -130,6 +131,7 @@ fun TransactionHistory(navController: NavController) {
     )
     val responseForTransactionHistory = remember { mutableStateOf<List<TransactionHistoryResponse>>(emptyList()) }
     LaunchedEffect(Unit) {
+        isLoading.value = true
         Log.d("token" , tokenForTheSession.value)
         try {
             responseForTransactionHistory.value = retrofitServiceForTransactionHistory.getTransactionHistory(token = tokenForTheSession.value)
@@ -147,6 +149,9 @@ fun TransactionHistory(navController: NavController) {
         }
         catch(e : Exception) {
             Log.d("error in getting transaction history" , "${e.message}")
+        }
+        finally {
+            isLoading.value = false
         }
     }
     Column(
@@ -169,7 +174,7 @@ fun TransactionHistory(navController: NavController) {
         Spacer(modifier = Modifier.padding(top = 30.dp))
         Column() {
             Spacer(modifier = Modifier.padding(top = 20.dp))
-            if (responseForTransactionHistory.value.isEmpty()) {
+            if (responseForTransactionHistory.value.isEmpty() && isLoading.value) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -182,7 +187,23 @@ fun TransactionHistory(navController: NavController) {
                         color = Color.White
                     )
                 }
-            } else {
+            }
+            else if(responseForTransactionHistory.value.isEmpty() && !isLoading.value) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Nothing to show here :(",
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 30.sp,
+                        textDecoration = TextDecoration.Underline,
+                        color = Color.White
+                    )
+                }
+            }
+            else {
                 LazyColumn() {
                     items(responseForTransactionHistory.value) { transaction ->
                         Card(
@@ -275,6 +296,7 @@ fun TransactionsBetweenTwoUsers(navController: NavController , otherId : Int , o
     val executed = remember { mutableStateOf(false) }
     val originalCount = remember { mutableIntStateOf(0) }
     val newCount = remember { mutableIntStateOf(0) }
+    val isLoading = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         Log.d("token" , tokenForTheSession.value)
         try {
@@ -332,6 +354,7 @@ fun TransactionsBetweenTwoUsers(navController: NavController , otherId : Int , o
     )
     val responseForTransactionHistoryWithOtherUser = remember { mutableStateOf<List<TransactionsWithOtherUser>>(emptyList()) }
     LaunchedEffect(Unit) {
+        isLoading.value = true
         Log.d("token" , tokenForTheSession.value)
         try {
             responseForTransactionHistoryWithOtherUser.value = retrofitServiceForGettingTransactionsWithOtherUser.getTransactionsWithOtherUser(otherId = otherId , token = tokenForTheSession.value)
@@ -349,6 +372,9 @@ fun TransactionsBetweenTwoUsers(navController: NavController , otherId : Int , o
         }
         catch(e : Exception) {
             Log.d("error in getting transaction history" , "${e.message}")
+        }
+        finally {
+            isLoading.value = false
         }
     }
     Column(
@@ -381,20 +407,37 @@ fun TransactionsBetweenTwoUsers(navController: NavController , otherId : Int , o
         Spacer(modifier = Modifier.padding(top = 30.dp))
         Column() {
             Spacer(modifier = Modifier.padding(top = 20.dp))
-            if (responseForTransactionHistoryWithOtherUser.value.isEmpty()) {
+            if (responseForTransactionHistoryWithOtherUser.value.isEmpty() && isLoading.value) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = "Loading...",
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 28.sp,
-                        color = Color.LightGray
+                        fontSize = 30.sp,
+                        textDecoration = TextDecoration.Underline,
+                        color = Color.White
                     )
                 }
-            } else {
+            }
+            else if(responseForTransactionHistoryWithOtherUser.value.isEmpty() && !isLoading.value) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Nothing to show here :(",
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 30.sp,
+                        textDecoration = TextDecoration.Underline,
+                        color = Color.White
+                    )
+                }
+            }
+            else {
                 LazyColumn() {
                     items(responseForTransactionHistoryWithOtherUser.value) { transaction ->
                         Card(

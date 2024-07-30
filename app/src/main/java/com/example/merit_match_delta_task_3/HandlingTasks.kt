@@ -182,6 +182,7 @@ fun ApprovalPage(navController : NavController) {
     val executed = remember { mutableStateOf(false) }
     val originalCount = remember { mutableIntStateOf(0) }
     val newCount = remember { mutableIntStateOf(0) }
+    val isLoading = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         Log.d("token" , tokenForTheSession.value)
         try {
@@ -240,6 +241,7 @@ fun ApprovalPage(navController : NavController) {
     )
     val responseForTasksNeedingApproval = remember { mutableStateOf<List<TaskSeekingApproval>>(emptyList()) }
     LaunchedEffect(Unit) {
+        isLoading.value = true
         Log.d("token" , tokenForTheSession.value)
         try {
             responseForTasksNeedingApproval.value = retrofitServiceForTasksThatNeedApproval.getTasksNeedingApproval(token = tokenForTheSession.value)
@@ -256,6 +258,9 @@ fun ApprovalPage(navController : NavController) {
         }
         catch(e : Exception) {
             Log.d("error in displaying tasks needing approval" , "${e.message}")
+        }
+        finally {
+            isLoading.value = false
         }
     }
     val showFilters = remember { mutableStateOf(false) }
@@ -337,7 +342,7 @@ fun ApprovalPage(navController : NavController) {
             }
         }
         Spacer(modifier = Modifier.padding(top = 30.dp))
-        if (responseForTasksNeedingApproval.value.isEmpty()) {
+        if (responseForTasksNeedingApproval.value.isEmpty() && isLoading.value) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -351,7 +356,23 @@ fun ApprovalPage(navController : NavController) {
                     color = Color.White
                 )
             }
-        } else {
+        }
+        else if(responseForTasksNeedingApproval.value.isEmpty() && !isLoading.value) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Nothing to show here :(",
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 30.sp,
+                    textDecoration = TextDecoration.Underline,
+                    color = Color.White
+                )
+            }
+        }
+        else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -637,6 +658,7 @@ fun DisplayTasks(navController: NavController) {
     val executed = remember { mutableStateOf(false) }
     val originalCount = remember { mutableIntStateOf(0) }
     val newCount = remember { mutableIntStateOf(0) }
+    val isLoading = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         Log.d("token" , tokenForTheSession.value)
         try {
@@ -695,6 +717,7 @@ fun DisplayTasks(navController: NavController) {
     )
     val responseForTaskDisplay = remember { mutableStateOf<List<Task>>(emptyList()) }
     LaunchedEffect(Unit) {
+        isLoading.value = true
         Log.d("token" , tokenForTheSession.value)
         try {
             responseForTaskDisplay.value = retrofitServiceForTaskDisplay.receiveTaskData(token = tokenForTheSession.value)
@@ -710,6 +733,9 @@ fun DisplayTasks(navController: NavController) {
         }
         catch(e : Exception) {
             Log.d("error in displaying tasks" , "${e.message}")
+        }
+        finally {
+            isLoading.value = false
         }
     }
     val showFilters = remember { mutableStateOf(false) }
@@ -789,7 +815,7 @@ fun DisplayTasks(navController: NavController) {
             }
         }
         Spacer(modifier = Modifier.padding(top = 30.dp))
-        if (responseForTaskDisplay.value.isEmpty()) {
+        if (responseForTaskDisplay.value.isEmpty() && isLoading.value) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -803,7 +829,23 @@ fun DisplayTasks(navController: NavController) {
                     color = Color.White
                 )
             }
-        } else {
+        }
+        else if(responseForTaskDisplay.value.isEmpty() && !isLoading.value) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Nothing to show here :(",
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 30.sp,
+                    textDecoration = TextDecoration.Underline,
+                    color = Color.White
+                )
+            }
+        }
+        else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
